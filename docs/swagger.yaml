@@ -1,0 +1,297 @@
+openapi: 3.0.0
+
+info:
+  title: multi-task-app API
+  description: multi-task-app API
+  version: 0.0.1
+
+paths:
+  /login:
+    post:
+      requestBody:
+        $ref: "#/components/requestBodies/PostLogin"
+      responses:
+        204:
+          description: No Content ログインしました
+      tags:
+        - Authentication
+
+  /logout:
+    post:
+      responses:
+        204:
+          description: No Content ログアウトしました
+      tags:
+        - Authentication
+
+  /ping:
+    get:
+      responses:
+        200:
+          description: No Content ログインされています
+        401:
+          description: No Content ログインされていません
+
+  /user:
+    get:
+      description: ユーザー情報を取得する
+      responses:
+        200:
+          $ref: "#/components/responses/GetUser"
+      tags:
+        - User
+
+    post:
+      description: ユーザーを新規登録する
+      requestBody:
+        $ref: "#/components/requestBodies/PostUser"
+      responses:
+        201:
+          $ref: "#/components/responses/PostUser"
+      tags:
+        - User
+
+    put:
+      description: ユーザーの情報を更新する
+      requestBody:
+        $ref: "#/components/requestBodies/PutUser"
+      responses:
+        204:
+          description: No Content ユーザーの情報を更新しました
+      tags:
+        - User
+
+  /task:
+    get:
+      description: タスク一覧を取得する
+      responses:
+        200:
+          $ref: "#/components/responses/GetTask"
+      tags:
+        - Task
+
+  /task/{task_id}:
+    put:
+      description: タスクの更新をする
+      parameters:
+        - $ref: "#/components/parameters/TaskID"
+      requestBody:
+        $ref: "#/components/requestBodies/PutTask"
+      responses:
+        204:
+          description: No Content タスクを更新しました
+        404:
+          description: Not Found タスクが見つかりませんでした
+      tags:
+        - Task
+
+    delete:
+      description: そのタスク以下の階層のタスクを全て削除する
+      parameters:
+        - $ref: "#/components/parameters/TaskID"
+      responses:
+        204:
+          description: No Content タスクを削除しました
+        404:
+          description: Not Found タスクが見つかりませんでした
+      tags:
+        - Task
+
+tags:
+  - name: Authentication
+    description: 認証API
+  - name: User
+    description: ユーザーAPI
+  - name: Task
+    description: タスクAPI
+
+components:
+  schemas:
+    UUID:
+      title: UUID
+      type: string
+      format: uuid
+      example: "123e4567-e89b-12d3-a456-426614174000"
+
+    MailAddress:
+      title: MailAddress
+      type: string
+      format: email
+      example: "yamada.a.aa@m.titech.ac.jp"
+
+    Password:
+      title: Password
+      type: string
+      format: password
+      example: "***"
+
+    UserName:
+      title: UserName
+      type: string
+      format: name
+      example: "太郎"
+
+    DateTime:
+      title: DateTime
+      type: string
+      format: date-time
+      example: "2020-12-18T03:06:21.050Z"
+
+    TaskName:
+      title: TaskName
+      type: string
+      format: name
+      example: "タスクA"
+
+    Finished:
+      title: Finished
+      type: boolean
+      format: T/F
+      example: "True"
+
+  parameters:
+    TaskID:
+      name: task_id
+      in: path
+      required: true
+      description: タスクID
+      schema:
+        $ref: "#/components/schemas/UUID"
+
+  requestBodies:
+    PostLogin:
+      description: ログイン時に必要な情報
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - mail_address
+              - password
+            properties:
+              mail_address:
+                $ref: "#/components/schemas/MailAddress"
+              password:
+                $ref: "#/components/schemas/Password"
+
+    PostUser:
+      description: 新規ユーザー登録時に必要な情報
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - mail_address
+              - password
+              - user_name
+            properties:
+              mail_address:
+                $ref: "#/components/schemas/MailAddress"
+              password:
+                $ref: "#/components/schemas/Password"
+              user_name:
+                $ref: "#/components/schemas/UserName"
+
+    PutUser:
+      description: ユーザー情報更新時に必要な情報
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - mail_address
+              - password
+              - user_name
+            properties:
+              mail_address:
+                $ref: "#/components/schemas/MailAddress"
+              password:
+                $ref: "#/components/schemas/Password"
+              user_name:
+                $ref: "#/components/schemas/UserName"
+
+    PutTask:
+      description: タスク情報更新時に必要な情報
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - task_name
+              - finished
+            properties:
+              task_name:
+                $ref: "#/components/schemas/TaskName"
+              finished:
+                $ref: "#/components/schemas/Finished"
+
+  responses:
+    GetUser:
+      description: ユーザー情報を取得しました
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - mail_address
+              - user_name
+              - created_at
+              - updated_at
+            properties:
+              id:
+                $ref: "#/components/schemas/UUID"
+              mail_address:
+                $ref: "#/components/schemas/MailAddress"
+              user_name:
+                $ref: "#/components/schemas/UserName"
+              created_at:
+                $ref: "#/components/schemas/DateTime"
+              updated_at:
+                $ref: "#/components/schemas/DateTime"
+
+    PostUser:
+      description: 新規ユーザー登録をしました
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - mail_address
+              - user_name
+              - created_at
+              - updated_at
+            properties:
+              id:
+                $ref: "#/components/schemas/UUID"
+              mail_address:
+                $ref: "#/components/schemas/MailAddress"
+              user_name:
+                $ref: "#/components/schemas/UserName"
+              created_at:
+                $ref: "#/components/schemas/DateTime"
+              updated_at:
+                $ref: "#/components/schemas/DateTime"
+
+    GetTask:
+      description: タスク一覧を取得しました
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  $ref: "#/components/schemas/UUID"
+                parent_id:
+                  $ref: "#/components/schemas/UUID"
+                task_name:
+                  $ref: "#/components/schemas/TaskName"
+                finished:
+                  $ref: "#/components/schemas/Finished"
+                created_at:
+                  $ref: "#/components/schemas/DateTime"
+                updated_at:
+                  $ref: "#/components/schemas/DateTime"
