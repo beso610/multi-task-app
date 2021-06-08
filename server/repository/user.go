@@ -25,9 +25,9 @@ type UpdateUserArgs struct {
 
 // UserRepository ユーザーリポジトリ
 type UserRepository interface {
-	CreateUser(CreateUserArgs) (*User, error)
-	UpdateUser(uuid.UUID, UpdateUserArgs) (*User, error)
-	GetUser(uuid.UUID) (*User, error)
+	CreateUser(args CreateUserArgs) (*User, error)
+	UpdateUser(uid uuid.UUID, args UpdateUserArgs) (*User, error)
+	GetUser(id uuid.UUID) (*User, error)
 	GetUsers() ([]*User, error)
 	GetUserByMailAddress(mailAddress string) (*User, error)
 }
